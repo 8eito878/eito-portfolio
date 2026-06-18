@@ -237,11 +237,28 @@
   .sticker.off{opacity:0;transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(.85);}
 
   @media (max-width:640px){
-    .corner.tl{top:70px;}
+    .corner.tl{top:70px;left:16px;}
+    .corner.bl{left:16px;}
+    .corner.br{right:16px;}
+    .corner{font-size:9px;}
     .p-img img,.p-img figure{max-width:86vw;max-height:46vh;}
     .p-img.big img,.p-img.big figure{max-width:100vw;max-height:132vh;}
-    .p-title .jp{max-width:78vw;bottom:96px;}
-    .metaline{margin-top:70px;}
+    .p-title .jp{max-width:78vw;bottom:96px;left:16px;}
+    .metaline{margin-top:70px;left:16px;right:16px;}
+    header{padding:12px 16px;}
+    header .left,header .right{gap:16px;}
+    .home-label{left:16px;}
+    .p-next{flex-direction:column;align-items:center;gap:36px;}
+    .aboutwrap{padding:80px 20px;}
+    .aboutwrap .bio{font-size:10px;}
+    .aboutwrap .links{gap:20px;}
+    .contactwrap{padding:90px 20px 60px;}
+    .c-form{max-width:100%;}
+  }
+  @media (max-width:390px){
+    header .left,header .right{gap:12px;}
+    .metaline{font-size:9px;gap:8px;}
+    .p-next{gap:28px;}
   }
 </style>
 </head>
@@ -390,14 +407,19 @@ landing.addEventListener('touchmove',e=>{
   if(!dragging){
     if(onWorks()){
       if(dy>0){ if(worksSettled) tScroll+=dy*0.9; }   // 下スワイプで横送り(到達直後は無視)
-      else landTP=clamp(landTP+dy*0.0016,0,1);          // 上スワイプでハチへ
+      else landTP=clamp(landTP+dy*0.003,0,1);           // 上スワイプでハチへ
     }else{
-      landTP=clamp(landTP+dy*0.0016,0,1);
+      landTP=clamp(landTP+dy*0.003,0,1);
     }
   }
   ltY=y;
 },{passive:true});
-landing.addEventListener('touchend',()=>{ltY=null;});
+landing.addEventListener('touchend',()=>{
+  if(ltY!==null&&landTP>0&&landTP<0.999){
+    landTP=(landTP>=0.45)?1:0;
+  }
+  ltY=null;
+});
 
 /* ============================================================
    LOADER
@@ -615,7 +637,7 @@ function frame(){
   if(!landingActive())return;
 
   // 縦スクロール状態を滑らかに反映し、CSS変数 --p を更新
-  landP=lerp(landP,landTP,0.085);
+  landP=lerp(landP,landTP,0.11);
   if(Math.abs(landP-landTP)<0.001)landP=landTP;
   landing.style.setProperty('--p',landP.toFixed(4));
   // ワーク定着判定: 完全に到達して少し経つまで横送りを無効化
