@@ -237,7 +237,11 @@
   .sticker.on{opacity:1;transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(1);}
   .sticker.off{opacity:0;transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(.85);}
 
+  .p-video{display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);min-height:100svh;}
+  .p-video video{max-width:62vw;max-height:52vh;width:auto;height:auto;}
+
   @media (max-width:640px){
+    .p-video video{max-width:86vw;max-height:46vh;}
     .corner.tl{top:70px;left:16px;}
     .corner.bl{left:16px;}
     .corner.br{right:16px;}
@@ -371,6 +375,7 @@ const WORKS=[
   {slug:'bldg-lamp',title:'Bldg Lamp',cat:'Product design',year:'2023',
    thumb:'/img/img-17.avif',asp:1050/822,
    images:['olkd72GRXGZoKpYI0QKMi91Qk.png?width=2000','IthFsbrSwtLNl1ob0UfUISr0.png?width=1200'],
+   video:'/bldg-lamp.mp4',
    desc:'本作品は、木材による左右対称の格子構造の内部に光源を配した立方体形状の照明作品である。建築構成を日常的なスケールで再構築することを意図し、ミース・ファン・デル・ローエの建築に着想を得た。部材を反復配置し内部に光を通すことで、左右対称の構成と陰影の関係が視覚的に強調されるよう意図的に工夫した。',
    meta:{year:'2023',size:'200x200x220mm',tools:'Illustrator / VcarvePro',schedule:'1ヶ月'}}
 ];
@@ -705,7 +710,7 @@ function renderWork(slug){
   const w=WORKS[i<0?0:i];
   const next=WORKS[(((i<0?0:i)+1))%WORKS.length];
   const prev=WORKS[(((i<0?0:i)-1+WORKS.length))%WORKS.length];
-  const imgs=w.images.length?w.images.map(it=>{const o=(typeof it==='string')?{src:it}:it;return{src:/^(?:data:|https?:)/.test(o.src)?o.src:F+o.src,big:!!o.big};}):[{src:w.thumb,big:false}];
+  const imgs=w.images.length?w.images.map(it=>{const o=(typeof it==='string')?{src:it}:it;return{src:/^(?:data:|https?:|\/)/. test(o.src)?o.src:F+o.src,big:!!o.big};}):[{src:w.thumb,big:false}];
   const plates=imgs.map((o,k)=>`
     <section class="plate p-img${o.big?' big':''}">
       <figure><img loading="lazy" src="${o.src}" alt="${w.title}"
@@ -727,6 +732,7 @@ function renderWork(slug){
       <div class="corner br">Eito Matsuo<span class="sub">${w.year}</span></div>
     </section>
     ${plates}
+    ${w.video?`<section class="plate p-video"><video src="${w.video}" autoplay loop muted playsinline></video></section>`:''}
     <section class="plate p-next">
       <a href="#/work/${prev.slug}"><span class="lbl">Prev</span><span class="t">${prev.title}</span></a>
       <a href="#/work/${next.slug}"><span class="lbl">Next</span><span class="t">${next.title}</span></a>
