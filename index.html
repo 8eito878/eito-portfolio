@@ -851,14 +851,14 @@ addEventListener('touchmove',e=>{
     trans={
       sx:bx/CS, sy:by/CS,          // グリッド座標
       R:-4,
-      band:GW*0.26,
+      band:GW*0.17,
       seed:Math.random()*100
     };
     lastSwitch=performance.now();
   }
 
   /* ---- マウス ---- */
-  let mx=-9999,my=-9999,smx=-9999,smy=-9999,inBox=false;
+  let mx=-9999,my=-9999,inBox=false;
   function boxPos(cx,cy){
     const r=cv.getBoundingClientRect();
     return [cx-r.left,cy-r.top,cx>=r.left&&cx<=r.right&&cy>=r.top&&cy<=r.bottom];
@@ -880,10 +880,6 @@ addEventListener('touchmove',e=>{
     if(!landingActive())return;
     if(!finished)return;
     if(cv.width===0||BW===0||wrap.clientWidth!==BW){sizeBox();}
-
-    /* カーソル慣性追従 */
-    if(smx<-9000){smx=mx;smy=my;}
-    smx+=(mx-smx)*0.065;smy+=(my-smy)*0.065;
 
     /* 残像つきの地 */
     ctx.globalAlpha=1;
@@ -935,15 +931,14 @@ addEventListener('touchmove',e=>{
       let x=(p.gx+0.5+p.jx)*CS+wander_x+wx;
       let y=(p.gy+0.5+p.jy)*CS*1.042+wander_y+wy;
 
-      /* レンズ歪み: カーソル周辺を凸レンズ状に押し広げる */
+      /* カーソルでさりげなくほどける */
       if(inBox){
-        const dx=x-smx,dy=y-smy;
+        const dx=x-mx,dy=y-my;
         const dq=dx*dx+dy*dy;
-        const R2=90000;
-        if(dq<R2){
-          const ratio=dq/R2;
-          const f=(1-ratio)*(1-ratio)*28;
-          x+=dx*f;y+=dy*f;
+        if(dq<22500){
+          const dd=Math.sqrt(dq)+1e-4;
+          const f=Math.exp(-dq/6000)*7;
+          x+=dx/dd*f;y+=dy/dd*f;
         }
       }
 
